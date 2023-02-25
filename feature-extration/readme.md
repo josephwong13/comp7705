@@ -1,4 +1,4 @@
-###1. Installation
+### 1. Installation
 
 If you don't have pipenv:
 ```
@@ -10,13 +10,13 @@ After installing pipenv:
 pipenv install
 ```
 
-###2. (To use in jupyter notebook) Run
+### 2. (To use in jupyter notebook) Run
 
 ```
 pipenv run jupyter notebook
 ```
 
-###3. (To use in VS code) Run
+### 3. (To use in VS code) Run
 ```
 pipenv shell
 ```
