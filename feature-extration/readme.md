@@ -23,3 +23,5 @@ pipenv shell
 
 Reference:
 https://machinelearningmastery.com/prepare-text-data-machine-learning-scikit-learn/
+https://medium.com/swlh/a-simple-guide-on-using-bert-for-text-classification-bbf041ac8d04
+https://www.tensorflow.org/text/tutorials/classify_text_with_bert
