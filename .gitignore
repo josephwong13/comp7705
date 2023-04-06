@@ -1,3 +1,5 @@
 feature-extration/cache_dir/
 feature-extration/outputs/
 feature-extration/runs/
+feature-extration/aclImdb/
+feature-extration/aclImdb_v1.tar.gz
