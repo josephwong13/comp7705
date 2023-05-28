@@ -4,3 +4,5 @@ feature-extration/runs/
 feature-extration/aclImdb/
 feature-extration/aclImdb_v1.tar.gz
 feature-extration/.ipynb_checkpoints/
+feature-extration/saved_model/
+
