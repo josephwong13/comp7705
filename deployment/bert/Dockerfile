@@ -2,7 +2,6 @@ FROM public.ecr.aws/lambda/python:3.10
 
 RUN pip install tensorflow
 RUN pip install tensorflow-text
-RUN pip install tensorflow-hub
 RUN pip install scikit-learn
 RUN pip install pandas
 RUN pip install scipy
