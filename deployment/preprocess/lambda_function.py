@@ -12,11 +12,13 @@ from zhconv import convert
 nltk.data.path.append('./nltk_data')
 jieba.load_userdict('./jieba/dict_big.txt')
 
+#Simplified Chinese to Traditional Chinese
 def scToTc(text):
     text = convert(text, 'zh-tw')
 
     return text
 
+#Expand English sentence to complete sentence
 def expandContraction(text):
     # specific
     text = re.sub(r'i[\'?]m', 'i am', text)
@@ -38,6 +40,7 @@ def expandContraction(text):
 
     return text
 
+#Clean data to specific form
 def cleanData(text):
     # expand contraction
     text = expandContraction(text)
@@ -81,11 +84,13 @@ def lemmatization(text, lemmatizer):
 
     return text
 
+#Segmentize Chinese sentence
 def segmentation(text):
     text = ' '.join(jieba.cut(text))
 
     return text
 
+#Start the whole preprocessing
 def preprocess(input, remove_stop, stem, lemmatize):
     words = stopwords.words('english')
     stemmer = PorterStemmer()
@@ -115,10 +120,9 @@ def preprocess(input, remove_stop, stem, lemmatize):
 
 def lambda_handler(event, context):
     sms = event['sms']
-    result = preprocess(sms, True, True, True)
+    result = preprocess(sms, True, True, False)
     result = str(result).lstrip('[').rstrip(']')
     result = str(result).lstrip('\'').rstrip('\'')
-    json_string = '{"sms": ["'+result+'"]}'
+    json_string = '{"preprocessed_sms": ["'+result+'"]}'
     result = json.loads(json_string)
     return result
-# predict([[1,2,3,4]])
