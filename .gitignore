@@ -7,3 +7,10 @@ feature-extration/.ipynb_checkpoints/
 feature-extration/saved_model/
 feature_extration/.ipynb_checkpoints/
 load_model/.ipynb_checkpoints/
+
+bert/cache_dir/
+bert/outputs/
+bert/runs/
+bert/.ipynb_checkpoints/
+bert/saved_model/
+
