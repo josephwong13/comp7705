@@ -1,0 +1,120 @@
+import json
+import boto3
+
+client = boto3.client('lambda')
+
+def StoreRawData(event):
+    # Store raw SMS data
+    input = {
+        "table":'sms_raw',
+        "sms":event['sms'],
+        "phone":event['phone'],
+        "label":event['label'],
+        "source":event['source'],
+        "datetime": event['datetime']
+    }
+        
+    response = client.invoke(
+            FunctionName = 'arn:aws:lambda:ap-southeast-1:509918437355:function:StoreDBRecord',
+            InvocationType = 'RequestResponse',
+            Payload = json.dumps(input)
+        )
+        
+    result = json.load(response['Payload'])
+    print(result)
+    return result
+
+def Preprocess(event):
+    input = {
+        "sms": [event['sms']]
+    }
+    
+    response = client.invoke(
+            FunctionName = 'arn:aws:lambda:ap-southeast-1:509918437355:function:preprocess',
+            InvocationType = 'RequestResponse',
+            Payload = json.dumps(input)
+        )
+    
+    result = json.load(response['Payload'])
+    print(result)
+    return result
+
+def Simplenn(event,sms_processed):
+    input = sms_processed
+    
+    response = client.invoke(
+        FunctionName = 'arn:aws:lambda:ap-southeast-1:509918437355:function:simplenn',
+        InvocationType = 'RequestResponse',
+        Payload = json.dumps(input)
+    )
+    
+    result = json.load(response['Payload'])
+    print(result)
+    return result
+
+def Bert(event,sms_processed):
+    input = sms_processed
+    
+    
+    response = client.invoke(
+        FunctionName = 'arn:aws:lambda:ap-southeast-1:509918437355:function:bert',
+        InvocationType = 'RequestResponse',
+        Payload = json.dumps(input)
+    )
+    
+    result = json.load(response['Payload'])
+    print(result)
+    return result
+
+def StoreProcessedData(event,sms_processed,snn_score,bert_score):
+    
+    # Store processed SMS data
+    input = {
+        "table":'sms_processed',
+        "sms":event['sms'],
+        "sms_processed":sms_processed,
+        "snn_score":snn_score,
+        "bert_score":bert_score,
+        "phone":event['phone'],
+        "label":event['label'],
+        "source":event['source'],
+        "datetime": event['datetime']
+    }
+        
+    response = client.invoke(
+            FunctionName = 'arn:aws:lambda:ap-southeast-1:509918437355:function:StoreDBRecord',
+            InvocationType = 'RequestResponse',
+            Payload = json.dumps(input)
+        )
+        
+    result = json.load(response['Payload'])
+    print(result)
+    return result
+
+def lambda_handler(event, context):
+    #Store raw sms data to DB
+    #StoreRawData(event)
+    
+    #Preprocess sms
+    sms_processed = Preprocess(event)
+    #Query result from simple neural network
+    snn_score = Simplenn(event,sms_processed)
+    
+    #Query result from bert
+    bert_score = Bert(event,sms_processed)
+    
+    #Store processed result to DB
+    sms_processed = str(sms_processed['preprocessed_sms']).lstrip('[').rstrip(']')
+    sms_processed = str(sms_processed).lstrip('\'').rstrip('\'')
+    snn_score = str(snn_score['score']).lstrip('[').rstrip(']')
+    snn_score = str(snn_score).lstrip('\'').rstrip('\'')
+    bert_score = str(bert_score).lstrip('[').rstrip(']')
+    bert_score = str(bert_score).lstrip('\'').rstrip('\'')
+    StoreProcessedData(event,sms_processed,snn_score,bert_score)
+    output = round(float(snn_score)*100,4)
+    result = {
+        'output':output
+    }
+    print(result)
+    return result
+    

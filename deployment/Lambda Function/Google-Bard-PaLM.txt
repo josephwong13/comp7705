@@ -1,0 +1,30 @@
+import google.generativeai as palm
+
+def lambda_handler(event, context):
+    # TODO implement
+    palm.configure(api_key='AIzaSyA3a4LQjNLVvz7XE0krCPylLQu6ltNsUGc')
+    
+    defaults = {
+        'model': 'models/text-bison-001',
+        'temperature': 0.3,
+        'candidate_count': 1,
+        'top_k': 40,
+        'top_p': 0.95,
+        'max_output_tokens': 1024,
+        'stop_sequences': [],
+        'safety_settings': [{"category":"HARM_CATEGORY_DEROGATORY","threshold":3},{"category":"HARM_CATEGORY_TOXICITY","threshold":3},{"category":"HARM_CATEGORY_VIOLENCE","threshold":3},{"category":"HARM_CATEGORY_SEXUAL","threshold":3},{"category":"HARM_CATEGORY_MEDICAL","threshold":3},{"category":"HARM_CATEGORY_DANGEROUS","threshold":3}],
+    }
+    
+    ingressData = event['msg']
+    prompt = f"""Can you please determine whether the messages are normal message or other message categoies within 20 words and explain why it is? Please mentions whether it is spam message or ham message. The message content is {ingressData}"""
+    
+    response = palm.generate_text(
+        **defaults,
+        prompt=prompt
+    )
+
+    # Print the response from the API
+    return {
+            'statusCode': 200,
+            'body': response.result
+    }

@@ -1,0 +1,55 @@
+import boto3
+import json
+import datetime
+import dateutil.tz
+
+format = "%Y-%m-%d %H:%M:%S"
+
+def lambda_handler(event, context):
+    # TODO implement
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(event['table'])
+    sms = event['sms']
+    phone = event['phone']
+    label = event['label']
+    source = event['source']
+    receivedtime = event['datetime']
+    
+    hk = dateutil.tz.gettz('Asia/Hong_Kong')
+    dt = datetime.datetime.now(tz=hk)
+    dt = dt.strftime(format)
+
+    if event['table']=='sms_raw':
+        table.put_item(
+            Item={
+                'id':str(str(dt)+"_"+phone),
+                'sms':str(sms),
+                'phone':str(phone),
+                'label':str(label),
+                'source':str(source),
+                'sms_datetime':str(receivedtime),
+                'record_datetime':str(dt)
+                }
+            )
+    elif event['table']=='sms_processed':
+        sms_processed = event['sms_processed']
+        snn_score = event['snn_score']
+        bert_score = event['bert_score']
+        table.put_item(
+            Item={
+                'id':str(str(dt)+"_"+phone),
+                'sms':str(sms),
+                'sms_processed':str(sms_processed),
+                'snn_score':str(snn_score),
+                'bert_score':str(bert_score),
+                'phone':str(phone),
+                'label':str(label),
+                'source':str(source),
+                'sms_datetime':str(receivedtime),
+                'record_datetime':str(dt)
+                }
+            )
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Successfully input! id: '+str(str(dt)+"_"+phone))
+    }

@@ -1,0 +1,27 @@
+import openai
+import json
+
+def lambda_handler(event, context):
+    # Set the OpenAI API endpoint URL and the secret key
+    openai.api_endpoint = "https://api.openai.com/v1/chat/completions"
+    openai.api_key = "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"
+    
+    ingressData = event['msg']
+    message = f"""Can you please determine whether the messages are normal message or other message categoies within 20 words and explain why it is? Please mentions whether it is spam message or ham message. The message content is {ingressData}"""
+    
+    # Set the parameters for the API request
+    params = {
+        "model": "gpt-3.5-turbo",
+        "messages": [{"role": "user",
+                    "content": message
+        }]
+    }
+    
+    # Make the API request
+    response = openai.ChatCompletion.create(**params)
+    
+    # Print the response from the API
+    return {
+            'statusCode': 200,
+            'body': response.choices[0].message.content
+    }
