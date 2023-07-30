@@ -15,3 +15,4 @@ bert/.ipynb_checkpoints/
 bert/saved_model/
 dataset/.ipynb_checkpoints/
 simple_nn/.ipynb_checkpoints/
+bert/model_result/saved_model/small_bert/.ipynb_checkpoints/
